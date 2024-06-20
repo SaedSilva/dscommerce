@@ -17,6 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Indica que o valor do atributo é gerado automaticamente pelo banco de dados
     private Long id;
     private String name;
+    @Column(unique = true) // Indica que o atributo é único
     private String email;
     private String phone;
     private LocalDate birthDate;
