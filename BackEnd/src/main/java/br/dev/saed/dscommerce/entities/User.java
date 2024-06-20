@@ -3,6 +3,8 @@ package br.dev.saed.dscommerce.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 //Anotações que ficam acima da declaração da classe
@@ -19,7 +21,9 @@ public class User {
     private String phone;
     private LocalDate birthDate;
     private String password;
-    //TODO implementar atributo coleção roles
+    //Lado do um para muitos
+    @OneToMany(mappedBy = "client") // Um cliente para muitos pedidos
+    private List<Order> orders = new ArrayList<>();
 
     public User() {
     }
@@ -79,6 +83,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     @Override
