@@ -5,12 +5,7 @@ import br.dev.saed.dscommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 // Anotações que ficam acima da declaração da classe
 @RestController // Indica que a classe é um controlador REST
@@ -30,4 +25,10 @@ public class ProductController {
     public Page<ProductDTO> findAll(Pageable pageable) {
         return service.findAll(pageable);
     }
+
+    @PostMapping // Indica que o método responde a requisições POST
+    public ProductDTO insert(@RequestBody ProductDTO dto) { // @RequestBody indica que o parâmetro vem no corpo da requisição
+        return service.insert(dto);
+    }
+
 }
