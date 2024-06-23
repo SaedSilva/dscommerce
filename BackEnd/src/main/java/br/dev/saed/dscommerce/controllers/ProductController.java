@@ -37,10 +37,16 @@ public class ProductController {
         return ResponseEntity.created(uri).body(dto);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/{id}") // Indica que o método responde a requisições PUT em /products/{id}
     public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
         dto = service.update(id, dto);
         return ResponseEntity.ok().body(dto);
+    }
+
+    @DeleteMapping(value = "/{id}") // Indica que o método responde a requisições GET em /products/{id}
+    public ResponseEntity<Void> delete(@PathVariable Long id) { // @PathVariable indica que o parâmetro vem da URL
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
