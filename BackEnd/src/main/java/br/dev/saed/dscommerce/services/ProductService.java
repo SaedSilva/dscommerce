@@ -3,11 +3,15 @@ package br.dev.saed.dscommerce.services;
 import br.dev.saed.dscommerce.dto.ProductDTO;
 import br.dev.saed.dscommerce.entities.Product;
 import br.dev.saed.dscommerce.repositories.ProductRepository;
+import br.dev.saed.dscommerce.services.exceptions.DatabaseException;
 import br.dev.saed.dscommerce.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service // Indica que a classe é um componente de serviço
@@ -25,7 +29,7 @@ public class ProductService {
     @Transactional(readOnly = true) // Indica que é uma transação de leitura
     public Page<ProductDTO> findAll(Pageable pageable) {
         Page<Product> products = repository.findAll(pageable);
-        return products.map(x -> new ProductDTO(x));
+        return products.map(ProductDTO::new);
     }
 
     @Transactional // Indica que é uma transação de escrita
@@ -38,15 +42,27 @@ public class ProductService {
 
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
-        Product entity = repository.getReferenceById(id);
-        copyDtoToEntity(dto, entity);
-        entity = repository.save(entity);
-        return new ProductDTO(entity);
+        try {
+            Product entity = repository.getReferenceById(id);
+            copyDtoToEntity(dto, entity);
+            entity = repository.save(entity);
+            return new ProductDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Id não encontrado: " + id);
+        }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS)
+    // Indica que é uma transação de leitura e que suporta transações aninhadas
     public void delete(Long id) {
-        repository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Id não encontrado: " + id);
+        }
+        try {
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Violação de integridade referencial");
+        }
     }
 
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
