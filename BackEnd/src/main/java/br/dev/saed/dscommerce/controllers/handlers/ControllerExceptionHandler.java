@@ -16,7 +16,8 @@ import java.time.Instant;
 
 @ControllerAdvice // Anotação para tratar exceções nas camadas de controle
 public class ControllerExceptionHandler {
-    @ExceptionHandler(ResourceNotFoundException.class) // Anotação para tratar exceções do tipo ResourceNotFoundException
+    @ExceptionHandler(ResourceNotFoundException.class)
+    // Anotação para tratar exceções do tipo ResourceNotFoundException
     public ResponseEntity<CustomError> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         CustomError error = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
@@ -34,7 +35,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<CustomError> methodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
         ValidationError error = new ValidationError(Instant.now(), status.value(), "Dados inválidos", request.getRequestURI());
-        for(FieldError f : e.getBindingResult().getFieldErrors()) {
+        for (FieldError f : e.getBindingResult().getFieldErrors()) {
             error.addError(f.getField(), f.getDefaultMessage());
         }
         return ResponseEntity.status(status).body(error);
