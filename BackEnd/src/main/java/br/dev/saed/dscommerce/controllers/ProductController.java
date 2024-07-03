@@ -27,8 +27,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
-        return ResponseEntity.ok().body(service.findAll(pageable));
+    public ResponseEntity<Page<ProductDTO>> findAll(@RequestParam(name = "name", defaultValue = "") String name, Pageable pageable) {
+        return ResponseEntity.ok().body(service.findAll(name, pageable));
     }
 
     @PostMapping // Indica que o método responde a requisições POST
