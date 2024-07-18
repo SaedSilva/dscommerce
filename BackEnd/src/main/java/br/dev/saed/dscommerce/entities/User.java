@@ -1,6 +1,8 @@
 package br.dev.saed.dscommerce.entities;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -8,7 +10,7 @@ import java.util.*;
 //Anotações que ficam acima da declaração da classe
 @Entity // Indica que a classe é uma entidade do banco de dados
 @Table(name = "tb_user") // Indica o nome da tabela no banco de dados
-public class User {
+public class User implements UserDetails {
 
     //Anotações que ficam acima da declaração dos atributos
     @Id // Indica que o atributo é uma chave primária
@@ -82,8 +84,38 @@ public class User {
         this.birthDate = birthDate;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setPassword(String password) {
