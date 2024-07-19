@@ -1,14 +1,19 @@
 package br.dev.saed.dscommerce.services;
 
+import br.dev.saed.dscommerce.dto.UserDTO;
 import br.dev.saed.dscommerce.entities.Role;
 import br.dev.saed.dscommerce.entities.User;
 import br.dev.saed.dscommerce.projections.UserDetailsProjection;
 import br.dev.saed.dscommerce.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,5 +37,21 @@ public class UserService implements UserDetailsService {
             user.addRole(new Role(u.getRoleId(), u.getAuthority()));
         }
         return user;
+    }
+
+    protected User authenticated() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // Obtém o usuário autenticado
+            Jwt jwtPrincipal = (Jwt) authentication.getPrincipal(); // Obtém o principal do token JWT
+            String username = jwtPrincipal.getClaim("username"); // Obtém o email do usuário
+            return repository.findByEmail(username).get(); // Busca o usuário no banco de dados e retorna
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getMe() {
+        return new UserDTO(authenticated());
     }
 }
