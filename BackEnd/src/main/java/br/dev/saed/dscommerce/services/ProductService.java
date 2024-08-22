@@ -1,6 +1,7 @@
 package br.dev.saed.dscommerce.services;
 
 import br.dev.saed.dscommerce.dto.ProductDTO;
+import br.dev.saed.dscommerce.dto.ProductMinDTO;
 import br.dev.saed.dscommerce.entities.Product;
 import br.dev.saed.dscommerce.repositories.ProductRepository;
 import br.dev.saed.dscommerce.services.exceptions.DatabaseException;
@@ -27,9 +28,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true) // Indica que é uma transação de leitura
-    public Page<ProductDTO> findAll(String name, Pageable pageable) {
+    public Page<ProductMinDTO> findAll(String name, Pageable pageable) {
         Page<Product> products = repository.searchByName(name, pageable);
-        return products.map(ProductDTO::new);
+        return products.map(ProductMinDTO::new);
     }
 
     @Transactional // Indica que é uma transação de escrita
