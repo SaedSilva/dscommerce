@@ -2,6 +2,7 @@ package br.dev.saed.dscommerce.services;
 
 import br.dev.saed.dscommerce.dto.ProductDTO;
 import br.dev.saed.dscommerce.dto.ProductMinDTO;
+import br.dev.saed.dscommerce.entities.Category;
 import br.dev.saed.dscommerce.entities.Product;
 import br.dev.saed.dscommerce.repositories.ProductRepository;
 import br.dev.saed.dscommerce.services.exceptions.DatabaseException;
@@ -71,5 +72,7 @@ public class ProductService {
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
+        entity.getCategories().clear();
+        dto.getCategories().forEach(x -> entity.getCategories().add(new Category(x.getId(), null)));
     }
 }
