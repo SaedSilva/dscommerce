@@ -54,8 +54,8 @@ public class ProductService {
         }
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS)
     // Indica que é uma transação de leitura e que suporta transações aninhadas
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Id não encontrado: " + id);
