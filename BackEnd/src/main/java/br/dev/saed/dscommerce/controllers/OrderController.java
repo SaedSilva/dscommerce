@@ -28,4 +28,12 @@ public class OrderController {
     public ResponseEntity<OrderDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT')")
+    @PostMapping // Indica que o método responde a requisições POST
+    public ResponseEntity<OrderDTO> insert(@Valid @RequestBody OrderDTO dto) { // @RequestBody indica que o parâmetro vem no corpo da requisição // @Valid indica que o objeto será validado
+        dto = service.insert(dto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri(); // Cria a URI do novo recurso
+        return ResponseEntity.created(uri).body(dto);
+    }
 }
